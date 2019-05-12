@@ -16,9 +16,7 @@ class RootController {
         rootResource.add(linkTo(methodOn(RepertoireController.class).all()).withRel("repertoire"));
         rootResource.add(linkTo(methodOn(ScreeningController.class).all()).withRel("screenings"));
         rootResource.add(linkTo(methodOn(ReservationController.class).all()).withRel("reservations"));
-
-        rootResource.add(linkTo(methodOn(TicketController.class).all()).withRel("tickets"));
-
+        
         return rootResource;
     }
 

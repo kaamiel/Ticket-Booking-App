@@ -8,7 +8,7 @@ dates="$(date -d '6 day' +'%Y-%m-%d')T12:30,$(date -d '9 day' +'%Y-%m-%d')T16:00
 
 echo -e "\n\033[0;34m[GET $dates repertoire] request + response message:\033[0m\n"
 
-data=$(curl -v http://localhost:8080/repertoire/$dates) &&
+data=$(curl -v http://localhost:6542/repertoire/$dates) &&
 
 echo -e "\n\033[0;34mreceived data:\033[0m\n"
 echo $data
@@ -17,7 +17,7 @@ echo $data
 
 echo -e "\n\033[0;32m2. The system lists movies available in the given time interval - title and screening times.\033[0m\n"
 
-echo $data | python -c 'import json, sys
+echo $data | python3 -c 'import json, sys
 result = json.load(sys.stdin)
 for repertoire in result["_embedded"]["repertoireList"]:
     if (repertoire["screeninged"]):
@@ -27,7 +27,7 @@ for repertoire in result["_embedded"]["repertoireList"]:
 
 echo -e "\n\033[0;32m3. The user chooses a particular screening.\033[0m"
 
-link=$(echo $data | python -c 'import json, sys
+link=$(echo $data | python3 -c 'import json, sys
 result = json.load(sys.stdin)
 for repertoire in result["_embedded"]["repertoireList"]:
     if (repertoire["screeninged"]):
@@ -45,7 +45,7 @@ echo $data
 
 echo -e "\n\033[0;32m4. The system gives information regarding screening room and available seats.\033[0m\n"
 
-echo $data | python -c 'import json, sys
+echo $data | python3 -c 'import json, sys
 result = json.load(sys.stdin)
 print("screening room:", result["room"]["nr"])
 print("available seats:")
@@ -58,17 +58,17 @@ echo -e "\n\033[0;32m5. The user chooses seats, and gives the name of the person
 
 screening=$data
 
-seat1=$(echo $screening | python -c 'import json, sys
+seat1=$(echo $screening | python3 -c 'import json, sys
 result = json.load(sys.stdin)
 print(result["availableSeats"][0])' | tr "'" '"') &&
 
-seat2=$(echo $screening | python -c 'import json, sys
+seat2=$(echo $screening | python3 -c 'import json, sys
 result = json.load(sys.stdin)
 print(result["availableSeats"][1])' | tr "'" '"') &&
 
 echo -e "\n\033[0;34m[POST reservation] request + response message:\033[0m\n"
 
-data=$(curl -v http://localhost:8080/reservations -H 'Content-type:application/json' \
+data=$(curl -v http://localhost:6542/reservations -H 'Content-type:application/json' \
 -d \
     '{
         "screening": '$screening',
@@ -94,7 +94,7 @@ echo $data
 
 echo -e "\n\033[0;32m6. The system gives back the total amount to pay and reservation expiration time.\033[0m\n"
 
-echo $data | python -c 'import json, sys
+echo $data | python3 -c 'import json, sys
 result = json.load(sys.stdin)
 print("total amount to pay:", result["amountToPay"])
 print("reservation expiration time:", result["expirationTime"])' &&
